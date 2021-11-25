@@ -28,6 +28,10 @@ const typeDefs = gql`
     type Query{
         getPosts: [PostMessage]
     }
+
+    type Mutation{
+        createPost(title: String!, message: String!): PostMessage!
+    }
 `;
 
 export default typeDefs;

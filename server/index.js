@@ -30,7 +30,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import typeDefs from './graphql/typeDefs.js';
-import resolvers from './graphql/resolvers/posts.js'
+import resolvers from './graphql/resolvers/index.js';
 
 const server = new ApolloServer({
 

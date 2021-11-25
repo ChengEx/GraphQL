@@ -1,11 +1,12 @@
-import postResolvers from './posts';
+import postResolvers from './posts.js';
 
 const resolvers = {
     Query: {
         ...postResolvers.Query
+    },
+    Mutation: {
+        ...postResolvers.Mutation
     }
-    // ,
-    // Mutation: {
-    //     ...postResolvers.Mutation
-    // }
 }
+
+export default resolvers;
