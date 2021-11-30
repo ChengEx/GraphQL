@@ -13,11 +13,13 @@ const auth = async (req, res, next) => {
       decodedData = jwt.verify(token, secret);
 
       req.userId = decodedData?.id;
+      console.log(req);
     } else {
       decodedData = jwt.decode(token);
 
       req.userId = decodedData?.sub;
-    }    
+      console.log(req);
+    }
 
     next();
   } catch (error) {

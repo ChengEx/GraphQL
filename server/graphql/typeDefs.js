@@ -4,7 +4,7 @@ const typeDefs = gql`
         id: ID!
         title: String!
         message: String!
-        username: String!
+        name: String!
         creator: String!
         selectedFile: String!
         likes: [Like]!
@@ -14,12 +14,12 @@ const typeDefs = gql`
 
     type Like {
         id: ID!
-        username: String!
+        name: String!
     }
 
     type User{
         id: ID!
-        username: String!
+        name: String!
         email: String!
         password: String!
         token: String!
@@ -29,8 +29,17 @@ const typeDefs = gql`
         getPosts: [PostMessage]
     }
 
+    input RegisterInput {
+        email: String!
+        password: String!
+        name: String!
+    }
+
     type Mutation{
         createPost(title: String!, message: String!): PostMessage!
+        register(registerInput: RegisterInput): User!
+        login(email:String!, password:String!): User!
+
     }
 `;
 
