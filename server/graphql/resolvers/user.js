@@ -46,6 +46,7 @@ const userQuery = {
                 throw new UserInputError('Errors',{errors});
             }
             const user = await User.findOne({email});
+            console.log("user", user);
             if(!user){
                 throw new UserInputError('Not Founds',{
                     errors:{
@@ -63,6 +64,7 @@ const userQuery = {
             }
 
             const token = jwt.sign( { email: user.email, id: user._id, name: user.name  }, secret, { expiresIn: "1h" } );
+            //console.log("token", token);
             return {
                 id: user._id,
                 name: user.name,

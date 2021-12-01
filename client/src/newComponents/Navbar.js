@@ -1,10 +1,10 @@
 import React,{ useState, useEffect } from 'react'
 import { AppBar, Typography, Avatar, Toolbar, Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import useStyles from './style';
-import chat from '../../images/chat.png';
+import useStyles from './NavbarStyle.js';
+import chat from '../images/chat.png';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import * as actionType from '../../constants/actionTypes';
+
 import decode from 'jwt-decode';
 
 const Navbar = () => {
@@ -47,7 +47,7 @@ const Navbar = () => {
               <Button variant="contained" className={classes.logout} color="secondary" onClick={logout}>Logout</Button>
             </div>
           ) : (
-            <Button component={Link} to="/auth" variant="contained" color="primary">Sign In</Button>
+            <Button component={Link} to="/login" variant="contained" color="primary">Sign In</Button>
           )}
         </Toolbar>
       </AppBar>

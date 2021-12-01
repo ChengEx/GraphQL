@@ -1,7 +1,7 @@
 
 import { AuthenticationError, UserInputError } from 'apollo-server';
-//import PostSchema from '../../newModels/postMessage.js';
 import PostMessage from '../../newModels/postMessage.js';
+import authCheck from '../../middleware/auth.js';
 
 const postQuery = {
     Query: {
@@ -16,12 +16,16 @@ const postQuery = {
     },
     Mutation: {
         async createPost(_, { title, message }, context) {
+            const user = authCheck(context);
+            //console.log("user", user);
             const newPost = new PostMessage({
                 title: title,
                 message: message,
-                name: "test01",
-                creator: "token dmsapdmasfpmkasfm",
+                name: user.name,
+                creator: user.id,
                 selectedFile: "test",  
+                tags:"yo",
+                createdAt: new Date().toISOString()
             })
             
             const post = await newPost.save();
