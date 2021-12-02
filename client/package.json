@@ -2,7 +2,9 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
+    "@apollo/client": "^3.5.5",
     "@apollo/react-hooks": "^4.0.0",
     "@material-ui/icons": "^4.11.2",
     "@mui/icons-material": "^5.1.0",

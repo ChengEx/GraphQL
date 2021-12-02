@@ -32,21 +32,25 @@ dotenv.config();
 import typeDefs from './graphql/typeDefs.js';
 import resolvers from './graphql/resolvers/index.js';
 
-const server = new ApolloServer({
+const corsOptions = {
+    credentials: true
+  };
 
+const server = new ApolloServer({
     typeDefs: typeDefs,
     resolvers: resolvers,
+    cors: corsOptions,
     context: ({req}) => ({req})
 });
 
 mongoose.connect(process.env.CONNECTION_URL, { useNewUrlParser: true })
     .then(()=> {
-        return server.listen({ port: 2000 })
+        return server.listen({ port: 5000 })
     });
                                                                                          
 
 
-server.listen({ port: 2000}).then(res =>{
+server.listen({ port: 5000}).then(res =>{
     //console.log(res);
     console.log(`Server running at ${res.url}`)
 })

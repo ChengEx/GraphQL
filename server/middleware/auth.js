@@ -36,7 +36,11 @@ const auth = async(context) => {
       if(token){
           try{
               const user = jwt.verify(token, secret);
-              return user;
+              const returnUser = {
+                name: user.name, 
+                id: user.id,
+              };
+              return returnUser;
           }catch(err){
               throw new AuthenticationError('Invalid/Expired token');
           }

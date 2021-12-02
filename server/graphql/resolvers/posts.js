@@ -16,8 +16,8 @@ const postQuery = {
     },
     Mutation: {
         async createPost(_, { title, message }, context) {
-            const user = authCheck(context);
-            //console.log("user", user);
+            //console.log("context", context);
+            const user = await authCheck(context);
             const newPost = new PostMessage({
                 title: title,
                 message: message,
