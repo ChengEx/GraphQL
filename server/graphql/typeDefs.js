@@ -38,7 +38,7 @@ const typeDefs = gql`
     type Mutation{
         createPost(title: String!, message: String!): PostMessage!
         register(registerInput: RegisterInput): User!
-        login(email:String!, password:String!): User!
+        login(email:String, password:String): User!
 
     }
 `;

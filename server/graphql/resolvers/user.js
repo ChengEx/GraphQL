@@ -41,6 +41,8 @@ const validateRegisterInput = (name, email, password) => {
 const userQuery = {
     Mutation: {
         async login(_,{ email, password }) {
+            console.log("email1",email);
+            console.log("password1", password);
             const { errors, valid } = validateLoginInput(email, password);
             if(!valid){
                 throw new UserInputError('Errors',{errors});

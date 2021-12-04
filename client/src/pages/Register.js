@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
+import { gql } from '@apollo/client';
+import { useMutation } from  '@apollo/react-hooks';
 import Input from '../newComponents/textInput.js';
 import useStyles from './L&Rstyle.js';
 import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
@@ -13,10 +15,22 @@ const Register = () => {
     const [ formData, setFormData ] = useState(initialState);
     const classes = useStyles();
 
+    
+
+    const [ register, { loading, error, data } ] = useMutation(REGISTER_USER,{ ssr: false},{
+        update(_, result){
+            console.log(result);
+        },
+        variables: {
+            name: formData.firstName+ " "+ formData.lastName,
+            email: formData.email,
+            password: formData.password
+        }
+    });
+
     const handleSubmit = (e)=>{
         e.preventDefault();
-
-       
+        register();
     }
 
     const handleChange = (e)=>{
@@ -67,5 +81,24 @@ const Register = () => {
         </Container>
     )
 }
+
+const REGISTER_USER = gql`
+    mutation registerInput(
+            $name: String!,
+            $email: String!,
+            $password: String!
+        ){
+        register(registerInput:{
+            name:$name,
+            email:$email,
+            password:$password
+        }){
+            id
+            name
+            email
+            token
+        }
+    }
+`
 
 export default Register

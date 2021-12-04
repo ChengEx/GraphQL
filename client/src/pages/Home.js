@@ -4,8 +4,10 @@ import React,{ useState, useEffect } from 'react';
 // import { gql, useQuery } from '@apollo/client';
 import { Container, Grow, Grid } from '@material-ui/core';
 import Posts from '../newComponents/Posts/Posts.js';
+import Input from '../newComponents/Input/Input.js';
 
 const Home=()=>{
+    const [ currentId, setCurrentId ] = useState(0);
     // const { data, loading, error } = useQuery(FETCH_POSTS_QUERY, { ssr: false});
     // if(data) {
     //     console.log(data);
@@ -21,12 +23,11 @@ const Home=()=>{
         <Container>
             <Grid container justifyContent="space-between" alignItems="stretch" spacing={3}>
                 <Grid item xs={12} sm={7}>
-                    <h1>this is home's postcard</h1>
-                    <Posts />
+                    <Posts setCurrentId={setCurrentId}/>
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                    <h1>this is home's input field</h1>
                     {/* <Form currentId={currentId} setCurrentId={setCurrentId}/> */}
+                    <Input currentId={currentId} setCurrentId={setCurrentId}/>
                 </Grid>
             </Grid>
         </Container>

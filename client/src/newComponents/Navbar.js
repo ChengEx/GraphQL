@@ -9,11 +9,12 @@ import decode from 'jwt-decode';
 
 const Navbar = () => {
     const classes = useStyles();
-    // const [user,setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+    const [user,setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+    console.log("user2",user);
     // const dispatch = useDispatch();
     // const history = useNavigate();
     // const location = useLocation();
-    const user = null;
+    //const user = null;
 
     const logout = () =>{
         // dispatch({ type: actionType.LOGOUT });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, CircularProgress } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 
 import PostCard from './PostCard.js';
@@ -7,7 +7,7 @@ import useStyles from './PostsStyles.js';
 import { gql, useQuery } from '@apollo/client';
 
     
-const Posts = () => {
+const Posts = ({ setCurrentId }) => {
     const classes = useStyles();
     const { data, loading, error } = useQuery(FETCH_POSTS_QUERY, { ssr: false});
     if(data) {
@@ -29,7 +29,7 @@ const Posts = () => {
                     ):(
                         data.getPosts.map((post)=>(
                             <Grid key={post.id} item xs={12} sm={6}>
-                                <PostCard post={post}/>
+                                <PostCard post={post} setCurrentId={setCurrentId}/>
                             </Grid>
                         ))
                     )

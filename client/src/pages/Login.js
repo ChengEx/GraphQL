@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import Input from '../newComponents/textInput.js';
+import { gql, useMutation } from '@apollo/client';
 import useStyles from './L&Rstyle.js';
+import { Link, useNavigate } from 'react-router-dom';
+
+import Input from '../newComponents/textInput.js';
+
 import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
@@ -11,16 +14,39 @@ const initialState = { email:'', password:''};
 const Login = () => {
     const [ formData, setFormData ] = useState(initialState);
     const classes = useStyles();
+    const history = useNavigate();
+    
+    const [ login, { loading, error, data } ] = useMutation(LOGIN_USER,{
+        update(_, result){
+            console.log(result);
+            history('/');
+        },
+        variables: {
+            email: formData.email,
+            password: formData.password
+        }
+    });
+    if(data) {
+        console.log(data);
+    } 
+    if(error) {
+        console.log(error);
+        return "error"; // blocks rendering
+    }
 
     const handleSubmit = (e)=>{
         e.preventDefault();
-
-       
+        login();
+        //console.log(formData);
+        // console.log("email",formData.email);
+        // console.log("password",formData.password);
     }
 
     const handleChange = (e)=>{
         setFormData({ ...formData, [e.target.name]:e.target.value });
+        
     }
+
 
     return (
         <Container component="main" maxWidth="xs">
@@ -31,12 +57,14 @@ const Login = () => {
                 <Typography variant="h5">Sign In</Typography>
                 <form className={classes.form} onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
-                        <Input name="firstName"
-                            label="First Name"
+                        <Input name="email"
+                            label="Email"
+                            value={formData.email}
                             handleChange={handleChange}
                             autoFocus/>                    
-                        <Input name="lastName"
-                            label="Last Name"
+                        <Input name="password"
+                            label="Password"
+                            value={formData.password}
                             handleChange={handleChange}/>    
                     </Grid>
                     <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
@@ -54,5 +82,16 @@ const Login = () => {
         </Container>
     )
 }
+
+const LOGIN_USER = gql`
+    mutation login($email: String!, $password: String!){
+        login(email:$email, password:$password) {
+            id
+            name
+            email
+            token
+        }
+    }
+`
 
 export default Login;

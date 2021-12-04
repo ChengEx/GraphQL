@@ -11,31 +11,39 @@ import { useDispatch } from 'react-redux';
 
 
 
-const PostCard = ({post:{ id, title, name, message, createdAt, selectedFile }}) => {
+const PostCard = ({post:{ id, title, name, message, createdAt, selectedFile, tags }}) => {
     const classes = useStyles();
+    var newCreatedAt = new Date(parseInt(createdAt));
+    console.log("tags", tags);
 
     return (
         <Card className={classes.card}>
             <CardMedia className={classes.media} image={selectedFile} title={title} />
             <div className={classes.overlay}>
                 <Typography variant="h6">{name}</Typography>
-                <Typography variant="body2">{moment(createdAt).fromNow()}</Typography>
+                <Typography variant="body2">{moment(newCreatedAt).fromNow()}</Typography>
             </div>
-            {/* {(user?.result?._id === post?.creator) && (
+            {
                 <div className={classes.overlay2}>
                     <Button 
                         style={{color:'white'}} 
                         size="small" 
-                        onClick={()=>setCurrentId(post._id)}>
+                        // onClick={()=>setCurrentId(post._id)}
+                        >
                         <MoreHorizIcon fontSize="medium" />
                     </Button>
                 </div>
-            )} */}
+            }
 
             {/* <div className={classes.details}>
-                <Typography variant="body2" color="textSecondary">{tags.map((tag)=>`#${tag}`)}</Typography>
+                {tags?(
+                    <Typography variant="body2" color="textSecondary"></Typography>
+                ):(
+                    <Typography variant="body2" color="textSecondary">{ tags.map((tag)=>`#${tag}`) }</Typography>
+                )}
+                
             </div> */}
-            
+
             <Typography className={classes.title} variant="h5" gutterBottom>{title}</Typography>
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p" gutterBottom>{message}</Typography>
