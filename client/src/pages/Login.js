@@ -19,6 +19,7 @@ const Login = () => {
     const [ login, { loading, error, data } ] = useMutation(LOGIN_USER,{
         update(_, result){
             console.log(result);
+            localStorage.setItem('profile', JSON.stringify({ ...result?.data }));
             history('/');
         },
         variables: {
