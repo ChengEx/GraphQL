@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { gql } from '@apollo/client';
-import { useMutation } from  '@apollo/react-hooks';
+import { gql, useMutation } from '@apollo/client';
 import Input from '../newComponents/textInput.js';
 import useStyles from './L&Rstyle.js';
 import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
@@ -17,20 +16,29 @@ const Register = () => {
 
     
 
-    const [ register, { loading, error, data } ] = useMutation(REGISTER_USER,{ ssr: false},{
+    const [ register, { loading, error, data } ] = useMutation(REGISTER_USER,{
         update(_, result){
             console.log(result);
         },
         variables: {
-            name: formData.firstName+ " "+ formData.lastName,
+            name: formData.firstName,
             email: formData.email,
             password: formData.password
         }
     });
+    if(data) {
+        console.log(data);
+    } 
+    if(error) {
+        console.log(error);
+        return "error"; // blocks rendering
+    }
 
     const handleSubmit = (e)=>{
         e.preventDefault();
+        console.log("formData", formData);
         register();
+        
     }
 
     const handleChange = (e)=>{
@@ -83,11 +91,7 @@ const Register = () => {
 }
 
 const REGISTER_USER = gql`
-    mutation registerInput(
-            $name: String!,
-            $email: String!,
-            $password: String!
-        ){
+    mutation register($name: String, $email: String, $password: String){
         register(registerInput:{
             name:$name,
             email:$email,

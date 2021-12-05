@@ -88,16 +88,13 @@ const userQuery = {
                 });
             }
             const hashPassword = await bcrypt.hash(password, 12);
-
             const newUser = new User({
                 name: name,
                 email: email,
                 password: hashPassword
-            })
+            })        
             const res = await newUser.save();
-            //console.log(res);
             const token = jwt.sign( { email: res.email, id: res._id, name: res.name  }, secret, { expiresIn: "1h" } );
-            //console.log("token",token);
             return {
                 id: res._id,
                 name: res.name,
