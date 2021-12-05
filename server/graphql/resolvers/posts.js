@@ -15,7 +15,7 @@ const postQuery = {
         }
     },
     Mutation: {
-        async createPost(_, { title, message }, context) {
+        async createPost(_, { createMessage :{ title, message, tags, selectedFile }}, context) {
             //console.log("context", context);
             const user = await authCheck(context);
             const newPost = new PostMessage({
@@ -23,8 +23,8 @@ const postQuery = {
                 message: message,
                 name: user.name,
                 creator: user.id,
-                selectedFile: "test",  
-                tags:"yo",
+                selectedFile: selectedFile,  
+                tags: tags,
                 createdAt: new Date().toISOString()
             })
             

@@ -8,6 +8,7 @@ import Input from '../newComponents/Input/Input.js';
 
 const Home=()=>{
     const [ currentId, setCurrentId ] = useState(0);
+
     // const { data, loading, error } = useQuery(FETCH_POSTS_QUERY, { ssr: false});
     // if(data) {
     //     console.log(data);

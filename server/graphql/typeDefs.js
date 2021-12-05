@@ -30,13 +30,20 @@ const typeDefs = gql`
     }
 
     input RegisterInput {
-        name: String
-        email: String
-        password: String   
+        name: String!
+        email: String!
+        password: String!
+    }
+
+    input CreateMessage { 
+        title: String!
+        message: String!
+        tags: String
+        selectedFile: String!
     }
 
     type Mutation{
-        createPost(title: String!, message: String!): PostMessage!
+        createPost(createMessage: CreateMessage): PostMessage!
         register(registerInput: RegisterInput): User!
         login(email:String!, password:String!): User!
 

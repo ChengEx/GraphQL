@@ -1,4 +1,4 @@
-import React from 'react'
+import React,  { useCallback }  from 'react'
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@material-ui/core';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
@@ -11,10 +11,16 @@ import { useDispatch } from 'react-redux';
 
 
 
-const PostCard = ({post:{ id, title, name, message, createdAt, selectedFile, tags }}) => {
+const PostCard = ({post:{ id, title, message, name, creator, createdAt, selectedFile, tags }}, setCurrentId) => {
     const classes = useStyles();
+    const user = JSON.parse(localStorage.getItem('profile'));
     var newCreatedAt = new Date(parseInt(createdAt));
-    console.log("tags", tags);
+    console.log("userPost", user);
+    console.log("creatorPost", creator);
+
+    const setCurrent = useCallback(event => {
+        setCurrentId(id)
+      }, [setCurrentId])
 
     return (
         <Card className={classes.card}>
@@ -23,27 +29,21 @@ const PostCard = ({post:{ id, title, name, message, createdAt, selectedFile, tag
                 <Typography variant="h6">{name}</Typography>
                 <Typography variant="body2">{moment(newCreatedAt).fromNow()}</Typography>
             </div>
-            {
+            {(user?.login?.id === creator) && (
                 <div className={classes.overlay2}>
                     <Button 
                         style={{color:'white'}} 
                         size="small" 
-                        // onClick={()=>setCurrentId(post._id)}
+                        onClick={() => setCurrent }
                         >
                         <MoreHorizIcon fontSize="medium" />
                     </Button>
                 </div>
-            }
+            )}  
 
-            {/* <div className={classes.details}>
-                {tags?(
-                    <Typography variant="body2" color="textSecondary"></Typography>
-                ):(
-                    <Typography variant="body2" color="textSecondary">{ tags.map((tag)=>`#${tag}`) }</Typography>
-                )}
-                
-            </div> */}
-
+            <div className={classes.details}>
+                <Typography variant="body2" color="textSecondary"></Typography>
+            </div>
             <Typography className={classes.title} variant="h5" gutterBottom>{title}</Typography>
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p" gutterBottom>{message}</Typography>

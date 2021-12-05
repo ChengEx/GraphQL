@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+
 import { Link } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 import Input from '../newComponents/textInput.js';
@@ -20,25 +21,21 @@ const Register = () => {
         update(_, result){
             console.log(result);
         },
+        onError(err) {
+            alert(err);
+        },
         variables: {
             name: formData.firstName,
             email: formData.email,
             password: formData.password
         }
     });
-    if(data) {
-        console.log(data);
-    } 
-    if(error) {
-        console.log(error);
-        return "error"; // blocks rendering
-    }
+
 
     const handleSubmit = (e)=>{
         e.preventDefault();
         console.log("formData", formData);
         register();
-        
     }
 
     const handleChange = (e)=>{
@@ -60,25 +57,30 @@ const Register = () => {
                             label="First Name"
                             handleChange={handleChange}
                             autoFocus
-                            half/>                    
+                            half
+                            required/>                    
                         <Input name="lastName"
                             label="Last Name"
                             handleChange={handleChange}
-                            half/>
+                            half
+                            required/>
                         <Input name="email" 
                             label="Email Address" 
                             handleChange={handleChange} 
-                            type="email" />
+                            type="email" 
+                            required/>
                         <Input name="password" 
                             label="Password" 
                             handleChange={handleChange} 
                             type={showPassword?"text":"password"} 
-                            handleShowPassword={handleShowPassword}/>
+                            handleShowPassword={handleShowPassword}
+                            required/>
                         <Input 
                             name="confirmPassword" 
                             label="Repeat Password" 
                             handleChange={handleChange} 
-                            type="password"/>
+                            type="password"
+                            required/>
                     </Grid>
                     <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                         Sign Up

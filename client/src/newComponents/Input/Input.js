@@ -1,14 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
+import { gql, useMutation } from '@apollo/client';
 import FileBase from 'react-file-base64'
 import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
+
 
 const Input = ({ currentId, setCurrentId }) => {
     const [ postData, setPostData] = useState({
         title:'', message:'', tags:'', selectedFile:''
     });
+
+    const user = JSON.parse(localStorage.getItem('profile'));
+
+ 
+    console.log("render2");
     const classes = useStyles();
+
+    
+
+    //title, message, tags, selectedFile
+    const [ createPost, { loading, error, data } ] = useMutation(CREATE_POST,{
+        update(_, result){
+            console.log(result);
+        },
+        onError(err) {
+            alert(err);
+        },
+        variables: {
+            title: postData.title,
+            message: postData.message,
+            tags: postData.tags,
+            selectedFile: postData.selectedFile
+        }
+    });
+
+    // useEffect(()=>{
+    //     if(post) setPostData(post);
+    // },[post])
+
+    
 
     const clear =() => {
         setCurrentId(0);
@@ -19,11 +50,22 @@ const Input = ({ currentId, setCurrentId }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+        createPost();
+    }
+
+    if(!user?.login?.name){
+        return (
+            <Paper className={classes.paper}>
+                <Typography variant="h6" align="center">
+                    Please Sign In to create your post!
+                </Typography>
+            </Paper>
+        )
     }
     
 
     return (
+        
         <Paper className={classes.paper}>
             <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
                 <Typography variant="h6">{currentId ? 'Editing':'Creating'} a post</Typography>
@@ -82,5 +124,18 @@ const Input = ({ currentId, setCurrentId }) => {
         </Paper>
     )
 }
+
+const CREATE_POST = gql`
+    mutation createPost($title: String, $message: String, $tags: String, $selectedFile: String){
+        createPost(createMessage:{title: $title, message: $message, tags: $tags, selectedFile: $selectedFile}){
+            id
+            title        
+            message
+            creator
+            namen
+            createdAt
+        }
+    }
+`
 
 export default Input
