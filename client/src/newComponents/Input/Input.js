@@ -1,28 +1,32 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
 import { gql, useMutation } from '@apollo/client';
 import FileBase from 'react-file-base64'
 import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
-
+import { createPosts } from '../../actions/posts.js';
 
 const Input = ({ currentId, setCurrentId }) => {
     const [ postData, setPostData] = useState({
         title:'', message:'', tags:'', selectedFile:''
     });
+    const post = useSelector((state)=> currentId? state.posts.getPosts.find((p)=>p.id===currentId): null);
 
+    console.log("getPostQQ",post);
+    console.log("currentId",currentId);
+    const dispatch = useDispatch();
     const user = JSON.parse(localStorage.getItem('profile'));
-
- 
-    console.log("render2");
     const classes = useStyles();
 
+    useEffect(()=>{
+        if(post) setPostData(post);
+    },[post])
     
-
     //title, message, tags, selectedFile
     const [ createPost, { loading, error, data } ] = useMutation(CREATE_POST,{
         update(_, result){
             console.log(result);
+            //dispatch(createPosts(result));
         },
         onError(err) {
             alert(err);
@@ -35,12 +39,6 @@ const Input = ({ currentId, setCurrentId }) => {
         }
     });
 
-    // useEffect(()=>{
-    //     if(post) setPostData(post);
-    // },[post])
-
-    
-
     const clear =() => {
         setCurrentId(0);
         setPostData({
@@ -50,7 +48,9 @@ const Input = ({ currentId, setCurrentId }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("postData",postData);
         createPost();
+        
     }
     const userByLogin = user?.login?.name;
     const userByRegister = user?.register?.name;
@@ -127,13 +127,13 @@ const Input = ({ currentId, setCurrentId }) => {
 }
 
 const CREATE_POST = gql`
-    mutation createPost($title: String, $message: String, $tags: String, $selectedFile: String){
-        createPost(createMessage:{title: $title, message: $message, tags: $tags, selectedFile: $selectedFile}){
+    mutation createPost($title: String, $message: String, $selectedFile: String){
+        createPost(createMessage:{title: $title, message: $message, selectedFile: $selectedFile}){
             id
             title        
             message
             creator
-            namen
+            name
             createdAt
         }
     }

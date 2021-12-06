@@ -8,7 +8,7 @@ const typeDefs = gql`
         creator: String!
         selectedFile: String!
         likes: [Like]!
-        tags: String!
+        tags: [String]!
         createdAt: String!
     }
 
@@ -36,10 +36,9 @@ const typeDefs = gql`
     }
 
     input CreateMessage { 
-        title: String!
-        message: String!
-        tags: String
-        selectedFile: String!
+        title: String
+        message: String
+        selectedFile: String
     }
 
     type Mutation{

@@ -11,16 +11,18 @@ import { useDispatch } from 'react-redux';
 
 
 
-const PostCard = ({post:{ id, title, message, name, creator, createdAt, selectedFile, tags }}, setCurrentId) => {
+const PostCard = ({post:{ id, title, message, name, creator, createdAt, selectedFile, tags }, setCurrentId}) => {
     const classes = useStyles();
     const user = JSON.parse(localStorage.getItem('profile'));
     var newCreatedAt = new Date(parseInt(createdAt));
     console.log("userPost", user);
     console.log("creatorPost", creator);
 
-    const setCurrent = useCallback(event => {
+    const setCurrent = (id) => {
         setCurrentId(id)
-      }, [setCurrentId])
+    }
+        
+    
 
     return (
         <Card className={classes.card}>
@@ -34,7 +36,7 @@ const PostCard = ({post:{ id, title, message, name, creator, createdAt, selected
                     <Button 
                         style={{color:'white'}} 
                         size="small" 
-                        onClick={() => setCurrent }
+                        onClick={() => setCurrent(id) }
                         >
                         <MoreHorizIcon fontSize="medium" />
                     </Button>

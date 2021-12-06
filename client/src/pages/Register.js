@@ -23,7 +23,7 @@ const Register = () => {
 
     const [ register, { loading, error, data } ] = useMutation(REGISTER_USER,{
         update(_, result){
-            console.log("register",result);
+            console.log("registerData",result);
             dispatch(signup(result, history));
         },
         onError(err) {

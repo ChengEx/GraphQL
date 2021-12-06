@@ -7,6 +7,7 @@ const postQuery = {
     Query: {
         async getPosts(){
             try {
+                console.log("BYE");
                 const posts = await PostMessage.find();
                 return posts;
             } catch(err) {
@@ -15,16 +16,17 @@ const postQuery = {
         }
     },
     Mutation: {
-        async createPost(_, { createMessage :{ title, message, tags, selectedFile }}, context) {
+        async createPost(_, { createMessage :{ title, message, selectedFile }}, context) {
             //console.log("context", context);
+            console.log("inside",message);
             const user = await authCheck(context);
+            console.log("authCheck", user);
             const newPost = new PostMessage({
                 title: title,
                 message: message,
                 name: user.name,
                 creator: user.id,
                 selectedFile: selectedFile,  
-                tags: tags,
                 createdAt: new Date().toISOString()
             })
             
