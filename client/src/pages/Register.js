@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 import Input from '../newComponents/textInput.js';
+import { signup } from '../actions/auth.js';
 import useStyles from './L&Rstyle.js';
 import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
@@ -14,12 +17,14 @@ const Register = () => {
     const [ showPassword, setShowPassword ] = useState(false);
     const [ formData, setFormData ] = useState(initialState);
     const classes = useStyles();
-
+    const dispatch = useDispatch();
+    const history = useNavigate();
     
 
     const [ register, { loading, error, data } ] = useMutation(REGISTER_USER,{
         update(_, result){
-            console.log(result);
+            console.log("register",result);
+            dispatch(signup(result, history));
         },
         onError(err) {
             alert(err);

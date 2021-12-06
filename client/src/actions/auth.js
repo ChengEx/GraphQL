@@ -1,25 +1,24 @@
 import { AUTH } from '../constants/actionTypes';
 import * as api from '../api';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
 export const signin = (formData, history) => async(dispatch) => {
-    console.log("1")
+    console.log("1",formData);
     try {
-        const { data } = await api.signIn(formData);
-
-        dispatch({ type: AUTH, data});
+        dispatch({ type: AUTH, formData});
         history('/');
     }catch(err){
         console.log(err);
     }
 }
 
+
 export const signup = (formData, history) => async(dispatch) =>{
     console.log("2")
     try {
-        console.log("hi",formData);
-        const { data } = await api.signUp(formData);
-        console.log("hi2",data);
-        dispatch({ type: AUTH, data});
+        console.log("singup DATA",formData);
+
+        dispatch({ type: AUTH, formData});
         history('/');
     }catch(err){
         console.log(err);

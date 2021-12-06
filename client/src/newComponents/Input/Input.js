@@ -52,8 +52,9 @@ const Input = ({ currentId, setCurrentId }) => {
         e.preventDefault();
         createPost();
     }
-
-    if(!user?.login?.name){
+    const userByLogin = user?.login?.name;
+    const userByRegister = user?.register?.name;
+    if(!userByLogin && !userByRegister){
         return (
             <Paper className={classes.paper}>
                 <Typography variant="h6" align="center">

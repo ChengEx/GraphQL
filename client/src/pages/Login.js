@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { gql, useMutation } from '@apollo/client';
 import useStyles from './L&Rstyle.js';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../newComponents/textInput.js';
-
+import { signin } from '../actions/auth.js';
 import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
@@ -14,13 +15,13 @@ const initialState = { email:'', password:''};
 const Login = () => {
     const [ formData, setFormData ] = useState(initialState);
     const classes = useStyles();
+    const dispatch = useDispatch();
     const history = useNavigate();
-    
+
     const [ login, { loading, error, data } ] = useMutation(LOGIN_USER,{
         update(_, result){
-            console.log(result);
-            localStorage.setItem('profile', JSON.stringify({ ...result?.data }));
-            history('/');
+            console.log("result",result);
+            dispatch(signin(result, history));
         },
         variables: {
             email: formData.email,
@@ -37,10 +38,12 @@ const Login = () => {
 
     const handleSubmit = (e)=>{
         e.preventDefault();
-        login();
-        //console.log(formData);
-        // console.log("email",formData.email);
-        // console.log("password",formData.password);
+        try {
+            login();
+        }catch(err) {
+            console.log("Error", err);
+        }
+        
     }
 
     const handleChange = (e)=>{
@@ -83,7 +86,6 @@ const Login = () => {
         </Container>
     )
 }
-
 const LOGIN_USER = gql`
     mutation login($email: String!, $password: String!){
         login(email:$email, password:$password) {

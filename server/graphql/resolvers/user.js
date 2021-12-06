@@ -41,14 +41,14 @@ const validateRegisterInput = (name, email, password) => {
 const userQuery = {
     Mutation: {
         async login(_,{ email, password }) {
-            console.log("email1",email);
-            console.log("password1", password);
+            //console.log("email1",email);
+            //console.log("password1", password);
             const { errors, valid } = validateLoginInput(email, password);
             if(!valid){
                 throw new UserInputError('Errors',{errors});
             }
             const user = await User.findOne({email});
-            console.log("user", user);
+            //console.log("user", user);
             if(!user){
                 throw new UserInputError('Not Founds',{
                     errors:{
@@ -75,6 +75,7 @@ const userQuery = {
             }
         },
         async register(_, {  registerInput : { name, email, password }}) {
+            console.log("XXX", name, email, password);
             const { errors, valid } = validateRegisterInput(name, email, password);
             if(!valid) {
                 throw new UserInputError('Errors',{errors});

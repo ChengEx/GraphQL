@@ -30,9 +30,9 @@ const typeDefs = gql`
     }
 
     input RegisterInput {
-        name: String!
-        email: String!
-        password: String!
+        name: String
+        email: String
+        password: String
     }
 
     input CreateMessage { 

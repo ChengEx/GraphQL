@@ -2,13 +2,16 @@ import React,{ useState, useEffect } from 'react';
 // import { useQuery } from '@apollo/react-hooks';
 // import gql from 'graphql-tag';
 // import { gql, useQuery } from '@apollo/client';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPosts } from '../actions/posts.js'
 import { Container, Grow, Grid } from '@material-ui/core';
 import Posts from '../newComponents/Posts/Posts.js';
 import Input from '../newComponents/Input/Input.js';
 
 const Home=()=>{
     const [ currentId, setCurrentId ] = useState(0);
-
+    const dispatch = useDispatch();
+    dispatch(getPosts());
     // const { data, loading, error } = useQuery(FETCH_POSTS_QUERY, { ssr: false});
     // if(data) {
     //     console.log(data);
