@@ -8,10 +8,13 @@ const postSchema = new Schema({
     creator: String,
     tags: [String],
     selectedFile: String,
-    likes: {
-        type: [String],
-        default: []
-    },
+    likes: [
+        {
+            userId: String,
+            name: String,
+            createdAt: String
+        }
+    ],
     createdAt: {
         type: Date,
         default: new Date()

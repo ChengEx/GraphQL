@@ -1,6 +1,5 @@
 import { AUTH } from '../constants/actionTypes';
-import * as api from '../api';
-import { gql, useQuery, useMutation } from '@apollo/client';
+
 
 export const signin = (formData, history) => async(dispatch) => {
     console.log("1",formData);

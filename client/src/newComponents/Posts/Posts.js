@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState, useEffect, useReducer } from 'react';
 import { Grid, CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -6,10 +6,25 @@ import PostCard from './PostCard.js';
 import useStyles from './PostsStyles.js';
 
     
-const Posts = ({ setCurrentId }) => {
+const Posts = ({ setCurrentId, updateData }) => {
+    const [data, setdata] = useState('');
     const posts = useSelector((state)=> state.posts);
     const classes = useStyles();
+    const [someVar, setSomeVar] = useState(null);
+    console.log("updateData2", updateData);
+    const renderData = () => {
+        console.log('render');
+        setSomeVar(true);
+    }
 
+
+    // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+    // if(CurrentId===1){
+    //     forceUpdate();
+    // }
+    
+    
     console.log("PostsData",posts.getPosts);
 
     return (

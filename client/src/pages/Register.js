@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
-import { Link } from 'react-router-dom';
+
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 import Input from '../newComponents/textInput.js';
 import { signup } from '../actions/auth.js';
 import useStyles from './L&Rstyle.js';
-import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
+import { Avatar, Button, Paper, Grid, Typography, Container } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
 

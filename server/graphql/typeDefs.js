@@ -14,7 +14,9 @@ const typeDefs = gql`
 
     type Like {
         id: ID!
-        name: String!
+        userId: String
+        name: String
+        createdAt: String
     }
 
     type User{
@@ -26,7 +28,7 @@ const typeDefs = gql`
     }
 
     type Query{
-        getPosts: [PostMessage]
+        getPosts: [PostMessage]!
     }
 
     input RegisterInput {
@@ -38,14 +40,27 @@ const typeDefs = gql`
     input CreateMessage { 
         title: String
         message: String
+        # tag: [String]
         selectedFile: String
     }
 
+    input UpdateMessage {
+        id: ID
+        title: String
+        message: String
+        # tag: [String]
+        selectedFile: String
+    }
+
+
+
     type Mutation{
         createPost(createMessage: CreateMessage): PostMessage!
+        updatePost(updateMessage: UpdateMessage): PostMessage!
+        deletePost(id: ID): PostMessage!
         register(registerInput: RegisterInput): User!
-        login(email:String!, password:String!): User!
-
+        login(email:String, password:String): User!
+        likePost(id: ID): PostMessage!
     }
 `;
 
