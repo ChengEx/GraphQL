@@ -22,11 +22,6 @@ const authLink = setContext(() => {
 const client = new ApolloClient({
     link: authLink.concat(httpLink),
     cache: new InMemoryCache(),
-    // defaultOptions: {
-    //   query: {
-    //     fetchPolicy: 'cache-first'
-    //   }
-    // }
     defaultOptions : { 
       watchQuery : { 
         fetchPolicy : 'cache-first' , 

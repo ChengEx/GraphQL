@@ -40,7 +40,7 @@ const typeDefs = gql`
     input CreateMessage { 
         title: String
         message: String
-        # tag: [String]
+        tags: String
         selectedFile: String
     }
 
@@ -48,7 +48,7 @@ const typeDefs = gql`
         id: ID
         title: String
         message: String
-        # tag: [String]
+        tags: String
         selectedFile: String
     }
 

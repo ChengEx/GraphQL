@@ -1,4 +1,4 @@
-import { rejects } from 'assert';
+import { reject } from 'assert';
 import { useState } from 'react';
 
 export const useForm = (callback, initialState = {}) => {
@@ -43,7 +43,7 @@ export const useForm = (callback, initialState = {}) => {
     };
 
     const clear = () => {
-        setValues({title: '', message: '', tags: '', selectedFile: ''})
+        setValues({ title: '', message: '', tags: '', selectedFile: '' })
     }
 
     return {

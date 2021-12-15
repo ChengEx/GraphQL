@@ -1,4 +1,4 @@
-import React,  { useCallback, useContext }  from 'react'
+import React,  {  useContext }  from 'react'
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@material-ui/core';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
@@ -7,12 +7,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import { gql, useMutation } from '@apollo/client';
 import useStyles from './PostCardStyle.js';
-import { useDispatch } from 'react-redux';
-import { FETCH_POSTS_QUERY } from '../../util/graphql.js';
-
 import { AuthContext } from '../../context/auth.js';
-
-
 
 
 const PostCard = ({post:{ id, title, message, name, creator, createdAt, selectedFile, tags, likes }, setCurrentId, refetch}) => {
@@ -83,10 +78,9 @@ const PostCard = ({post:{ id, title, message, name, creator, createdAt, selected
                         <MoreHorizIcon fontSize="medium" />
                     </Button>
                 </div>
-            )}  
-
+            )} 
             <div className={classes.details}>
-                <Typography variant="body2" color="textSecondary"></Typography>
+                <Typography variant="body2" color="textSecondary">{tags?.map((tag)=>`#${tag}`)}</Typography>
             </div>
             <Typography className={classes.title} variant="h5" gutterBottom>{title}</Typography>
             <CardContent>

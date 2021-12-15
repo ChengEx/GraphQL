@@ -8,7 +8,6 @@ const postQuery = {
     Query: {
         async getPosts(){
             try {
-                console.log("BYE");
                 const posts = await PostMessage.find();
                 //console.log("getPostDataInBackEnd", posts);
                 return posts;
@@ -18,34 +17,35 @@ const postQuery = {
         }
     },
     Mutation: {
-        async createPost(_, { createMessage :{ title, message, selectedFile }}, context) {
-            console.log("context", context);
-            console.log("inside",message);
+        async createPost(_, { createMessage :{ title, message, tags, selectedFile }}, context) {
+            console.log("inside",tags);
             const user = await authCheck(context);
-            //if(!user) return res.status(404).send('unvalid header token');
-            console.log("authCheck", user);
+            if(!user) throw new UserInputError('Errors', {errors});
+            const tagsArray = tags.split(',')
             const newPost = new PostMessage({
                 title: title,
                 message: message,
                 name: user.name,
                 creator: user.id,
+                tags: tagsArray,
                 selectedFile: selectedFile,  
                 createdAt: new Date().toISOString()
             })
-            console.log("newPost", newPost);
+            //console.log("newPost", newPost);
             const post = await newPost.save();
-            // context.pubsub.publish('NEW_POST', {
-            //     newPost: post
-            //   });
+
             return post;
         },
-        async updatePost(_, { updateMessage : { id, title, message, selectedFile }}, context) {
+        async updatePost(_, { updateMessage : { id, title, message, tags, selectedFile }}, context) {
             const user = await authCheck(context);
             console.log("authCheck2", id);
-            //if(!user) return res.status(404).send('unvalid header token');
+            console.log("tags", title);
+            console.log("tags", message);
+            console.log("tags", tags);
+            const tagsArray = tags.split(',');
+            console.log("tagsArray", tagsArray);
             if(!user) throw new UserInputError('Errors', {errors});
-            const post = await PostMessage.findByIdAndUpdate( {_id:id} ,{title:title,message: message,selectedFile:selectedFile},{new: true});
-            console.log("post ",post);
+            const post = await PostMessage.findByIdAndUpdate( { _id:id } ,{ title:title, message: message, tags: tagsArray, selectedFile:selectedFile },{new: true});
             if(!post) throw new UserInputError('Errors', {errors});
             return post;        
         },
@@ -81,12 +81,8 @@ const postQuery = {
                 throw new UserInputError('Post not found');
             }
             //return post;
-        },
-        // Subscription: {
-        //     newPost: {
-        //       subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_POST')
-        //     }
-        // }
+        }
+
     }
 
 };

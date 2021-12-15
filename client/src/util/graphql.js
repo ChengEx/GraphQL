@@ -8,6 +8,7 @@ export const FETCH_POSTS_QUERY = gql`
             message
             name
             creator
+            tags
             selectedFile
             likes {
                 id

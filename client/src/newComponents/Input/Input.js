@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
-// import { gql, useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
-import FileBase from 'react-file-base64'
-import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
-import { getPosts } from '../../actions/posts.js'
-import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../util/hooks.js';
 import { FETCH_POSTS_QUERY } from '../../util/graphql.js';
 import { AuthContext } from '../../context/auth.js';
-import { updatePost } from '../../api';
 
 const Input = ({ currentId, setCurrentId, posts, refetch }) => {
     const { values, OnlyForUpdateForm, onChange, selectedFile, onSubmit, clear } = useForm(createOrUpdataPostCallback, {
@@ -40,6 +34,7 @@ const Input = ({ currentId, setCurrentId, posts, refetch }) => {
         variables: {
             title: values.title,
             message: values.message,
+            tags: values.tags,
             selectedFile: values.selectedFile
         },
         update(proxy, result) {
@@ -64,7 +59,7 @@ const Input = ({ currentId, setCurrentId, posts, refetch }) => {
             refetch();
             values.title = '';
             values.message = '';
-            //values.tags = '';
+            values.tags = '';
             values.selectedFile = '';
         }
       });
@@ -74,11 +69,12 @@ const Input = ({ currentId, setCurrentId, posts, refetch }) => {
             id: currentId,
             title: values.title,
             message: values.message,
-            //tags: postData.tags,
+            tags: values.tags,
             selectedFile: values.selectedFile
         },
         update(_, result){
             console.log("updatePost ",result);
+            refetch();
         },
         onError(err) {
             alert(err);
@@ -172,8 +168,8 @@ const Input = ({ currentId, setCurrentId, posts, refetch }) => {
 }
 
 const CREATE_POST = gql`
-    mutation createPost($title: String, $message: String, $selectedFile: String){
-        createPost(createMessage:{title: $title, message: $message, selectedFile: $selectedFile}){
+    mutation createPost($title: String, $message: String, $tags: String, $selectedFile: String){
+        createPost(createMessage:{title: $title, message: $message, tags: $tags, selectedFile: $selectedFile}){
             id
             title        
             message
@@ -185,8 +181,8 @@ const CREATE_POST = gql`
 `
 
 const UPDATE_POST = gql`
-    mutation updatePost($id: ID, $title: String, $message: String, $selectedFile: String) {
-        updatePost(updateMessage:{id: $id, title: $title, message: $message, selectedFile: $selectedFile}) {
+    mutation updatePost($id: ID, $title: String, $message: String, $tags: String,  $selectedFile: String) {
+        updatePost(updateMessage:{id: $id, title: $title, message: $message, tags: $tags, selectedFile: $selectedFile}) {
             id
             title        
             message

@@ -2,25 +2,19 @@ import React, { useState, useContext } from 'react'
 
 import { AuthContext } from '../context/auth.js';
 import { useForm } from '../util/hooks.js';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
 import Input from '../newComponents/textInput.js';
-import { signup } from '../actions/auth.js';
 import useStyles from './L&Rstyle.js';
 import { Avatar, Button, Paper, Grid, Typography, Container } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
 
-// const initialState = { firstName:'',lastName:'',email:'', password:'', confirmPassword:'' };
-
 function Register(){
     const context = useContext(AuthContext);
     const [errors, setErrors] = useState({});
     const [ showPassword, setShowPassword ] = useState(false);
-    // const [ formData, setFormData ] = useState(initialState);
     const classes = useStyles();
-    // const dispatch = useDispatch();
     const history = useNavigate();
     
     const { onChange, onSubmit, values } = useForm(registerUser, {
@@ -52,16 +46,6 @@ function Register(){
     function registerUser() {
         register();
     }
-
-    // const handleSubmit = (e)=>{
-    //     e.preventDefault();
-    //     console.log("formData", formData);
-    //     register();
-    // }
-
-    // const handleChange = (e)=>{
-    //     setFormData({ ...formData, [e.target.name]:e.target.value });
-    // }
 
     const handleShowPassword = ()=>setShowPassword(!showPassword)
 

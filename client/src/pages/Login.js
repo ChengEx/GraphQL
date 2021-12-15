@@ -3,23 +3,18 @@ import { AuthContext } from '../context/auth.js';
 import { useForm } from '../util/hooks.js';
 import { gql, useMutation } from '@apollo/client';
 import useStyles from './L&Rstyle.js';
-import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../newComponents/textInput.js';
-import { signin } from '../actions/auth.js';
 import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
 
-// const initialState = { email:'', password:''};
-
 function Login(props){
-    //const [ formData, setFormData ] = useState(initialState);
     const context = useContext(AuthContext);
     const [errors, setErrors] = useState({});
     const classes = useStyles();
-    // const dispatch = useDispatch();
+
     const history = useNavigate();
     const { onChange, onSubmit, values } = useForm(loginUserCallback, {
         email: '',
@@ -30,9 +25,7 @@ function Login(props){
         update(_, { data: { login: userData }} ){
             console.log("result look structure",userData);
             context.login(userData);
-            // props.history.push('/');
             history('/');
-            //dispatch(signin(result, history));
         },
         onError(err) {
             setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -47,13 +40,6 @@ function Login(props){
         console.log("hihi");
         login();
     }
-
-
-
-    // const handleChange = (e)=>{
-    //     setFormData({ ...formData, [e.target.name]:e.target.value });
-        
-    // }
 
 
     return (
