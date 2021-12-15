@@ -5,23 +5,26 @@ import Home from './pages/Home.js';
 import Login from './pages/Login.js';
 import Register from './pages/Register.js';
 import Navbar from './newComponents/Navbar.js';
-
+import { AuthProvider } from './context/auth.js';
+import AuthRoute from './util/AuthRoute';
 //import { BrowserRouter as Router, Route } from 'react-router-dom';
 //import { Container } from 'semantic-ui-react';
 
-const App=()=>{
+function App(){
     
     return (
-        <BrowserRouter>
-            <Container maxidth="lg">
-                <Navbar/>
-                <Routes>
-                    <Route path="/" exact element={<Home />} />
-                    <Route path="/login" exact element={<Login/>} />
-                    <Route path="/register" exact element={<Register/>} />
-                </Routes>
-            </Container>
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <Container maxidth="lg">
+                    <Navbar/>
+                    <Routes>
+                        <Route path="/" exact element={<Home/>} />
+                        <Route path="/login" exact element={<Login/>} />
+                        <Route path="/register" exact element={<Register/>} />
+                    </Routes>
+                </Container>
+            </BrowserRouter>
+        </AuthProvider>
         
     )
 }

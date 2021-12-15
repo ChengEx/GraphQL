@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 
-
+import { AuthContext } from '../context/auth.js';
+import { useForm } from '../util/hooks.js';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { gql, useMutation } from '@apollo/client';
@@ -11,41 +12,56 @@ import { Avatar, Button, Paper, Grid, Typography, Container } from '@material-ui
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
 
-const initialState = { firstName:'',lastName:'',email:'', password:'', confirmPassword:'' };
+// const initialState = { firstName:'',lastName:'',email:'', password:'', confirmPassword:'' };
 
-const Register = () => {
+function Register(){
+    const context = useContext(AuthContext);
+    const [errors, setErrors] = useState({});
     const [ showPassword, setShowPassword ] = useState(false);
-    const [ formData, setFormData ] = useState(initialState);
+    // const [ formData, setFormData ] = useState(initialState);
     const classes = useStyles();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const history = useNavigate();
     
+    const { onChange, onSubmit, values } = useForm(registerUser, {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
 
-    const [ register, { loading, error, data } ] = useMutation(REGISTER_USER,{
-        update(_, result){
-            console.log("registerData",result);
-            dispatch(signup(result, history));
+    const [ register, { loading } ] = useMutation(REGISTER_USER,{
+        update(_, {data: { register: userData }}){
+            console.log("registerData structure",userData);
+            context.login(userData);
+            // props.history.push('/');
+
+            history('/');
         },
         onError(err) {
-            alert(err);
+            setErrors(err.graphQLErrors[0].extensions.exception.errors);
         },
         variables: {
-            name: formData.firstName,
-            email: formData.email,
-            password: formData.password
+            name: values.firstName+" "+values.lastName,
+            email: values.email,
+            password: values.password
         }
     });
 
-
-    const handleSubmit = (e)=>{
-        e.preventDefault();
-        console.log("formData", formData);
+    function registerUser() {
         register();
     }
 
-    const handleChange = (e)=>{
-        setFormData({ ...formData, [e.target.name]:e.target.value });
-    }
+    // const handleSubmit = (e)=>{
+    //     e.preventDefault();
+    //     console.log("formData", formData);
+    //     register();
+    // }
+
+    // const handleChange = (e)=>{
+    //     setFormData({ ...formData, [e.target.name]:e.target.value });
+    // }
 
     const handleShowPassword = ()=>setShowPassword(!showPassword)
 
@@ -56,34 +72,39 @@ const Register = () => {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography variant="h5">Sign Up</Typography>
-                <form className={classes.form} onSubmit={handleSubmit}>
+                <form className={classes.form} onSubmit={onSubmit}>
                     <Grid container spacing={2}>
                         <Input name="firstName"
                             label="First Name"
-                            handleChange={handleChange}
+                            onChange={onChange}
+                            value={values.firstName}
                             autoFocus
                             half
                             required/>                    
                         <Input name="lastName"
                             label="Last Name"
-                            handleChange={handleChange}
+                            onChange={onChange}
+                            value={values.lastName}
                             half
                             required/>
                         <Input name="email" 
                             label="Email Address" 
-                            handleChange={handleChange} 
+                            onChange={onChange} 
+                            value={values.email}
                             type="email" 
                             required/>
                         <Input name="password" 
                             label="Password" 
-                            handleChange={handleChange} 
+                            onChange={onChange} 
+                            value={values.password}
                             type={showPassword?"text":"password"} 
                             handleShowPassword={handleShowPassword}
                             required/>
                         <Input 
                             name="confirmPassword" 
                             label="Repeat Password" 
-                            handleChange={handleChange} 
+                            onChange={onChange} 
+                            value={values.confirmPassword}
                             type="password"
                             required/>
                     </Grid>
@@ -92,6 +113,15 @@ const Register = () => {
                     </Button>
                     
                 </form>
+                {/* {Object.keys(errors).length > 0 && (
+                    <div className="ui error message">
+                    <ul className="list">
+                        {Object.values(errors).map((value) => (
+                        <li key={value}>{value}</li>
+                        ))}
+                    </ul>
+                    </div>
+                )} */}
             </Paper>
         </Container>
     )

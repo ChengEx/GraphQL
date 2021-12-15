@@ -22,7 +22,8 @@
 // mongoose.connect(process.env.CONNECTION_URL,{ useNewUrlParser: true, useUnifiedTopology: true })
 //     .then(()=> app.listen(PORT,()=>console.log(`Server runing on port: ${PORT}`)))
 //     .catch((error)=>console.log(error.message));
-import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServer } from 'apollo-server';
+import { PubSub } from 'graphql-subscriptions'
 import mongoose from 'mongoose';
 
 import dotenv from 'dotenv';
@@ -31,6 +32,8 @@ dotenv.config();
 
 import typeDefs from './graphql/typeDefs.js';
 import resolvers from './graphql/resolvers/index.js';
+
+// const pubsub = new PubSub();
 
 const corsOptions = {
     credentials: true

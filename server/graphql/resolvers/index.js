@@ -8,7 +8,10 @@ const resolvers = {
     Mutation: {
         ...postResolvers.Mutation,
         ...userResolvers.Mutation
-    }
+    },
+    // Subscription: {
+    //     ...postResolvers.Subscription
+    // }
 }
 
 export default resolvers;

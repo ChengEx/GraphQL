@@ -1,4 +1,4 @@
-import React,  { useCallback }  from 'react'
+import React,  { useCallback, useContext }  from 'react'
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@material-ui/core';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined';
@@ -8,37 +8,41 @@ import moment from 'moment';
 import { gql, useMutation } from '@apollo/client';
 import useStyles from './PostCardStyle.js';
 import { useDispatch } from 'react-redux';
+import { FETCH_POSTS_QUERY } from '../../util/graphql.js';
+
+import { AuthContext } from '../../context/auth.js';
 
 
 
-const PostCard = ({post:{ id, title, message, name, creator, createdAt, selectedFile, tags, likes }, setCurrentId}) => {
+
+const PostCard = ({post:{ id, title, message, name, creator, createdAt, selectedFile, tags, likes }, setCurrentId, refetch}) => {
     const classes = useStyles();
-    const user = JSON.parse(localStorage.getItem('profile'));
-    var newCreatedAt = new Date(parseInt(createdAt));
-    console.log("userPost", user);
-    console.log("creatorPost", creator);
-
+    const newCreatedAt = new Date(parseInt(createdAt));
+    const { user } = useContext(AuthContext);
+    console.log("PostCard AuthContext", user);
     const setCurrent = (id) => {
         setCurrentId(id)
     }
 
     const [ deletePost, { deleteLoading, deleteError, deleteData } ] = useMutation(DELETE_POST,{
-        update(_, result){
+        variables: {
+            id: id
+        },
+        update(proxy, result){
             console.log("deletePost ",result);
-            //dispatch(createPosts(result));
+            
+            refetch();
         },
         onError(err) {
             alert(err);
         },
-        variables: {
-            id: id
-        }
+        
     });
 
     const [ likePost, { likeLoading, likeError, likeData } ] = useMutation(LIKE_POST,{
         update(_, result){
             console.log("likePost ",result);
-            //dispatch(createPosts(result));
+            refetch();
         },
         onError(err) {
             alert(err);
@@ -51,7 +55,7 @@ const PostCard = ({post:{ id, title, message, name, creator, createdAt, selected
 
     const Likes = () => {
         if (likes.length > 0) {
-            return likes.find((like) => like === (user?.login?.id))
+            return likes.find((like) => like === (user?.id))
               ? (
                 <><ThumbUpAltIcon fontSize="small" />&nbsp;{likes.length > 2 ? `You and ${likes.length - 1} others` : `${likes.length} like${likes.length > 1 ? 's' : ''}` }</>
               ) : (
@@ -69,7 +73,7 @@ const PostCard = ({post:{ id, title, message, name, creator, createdAt, selected
                 <Typography variant="h6">{name}</Typography>
                 <Typography variant="body2">{moment(newCreatedAt).fromNow()}</Typography>
             </div>
-            {(user?.login?.id === creator) && (
+            {(user?.id === creator) && (
                 <div className={classes.overlay2}>
                     <Button 
                         style={{color:'white'}} 
@@ -92,12 +96,12 @@ const PostCard = ({post:{ id, title, message, name, creator, createdAt, selected
                 <Button 
                     size="small" 
                     color="primary" 
-                    disabled={!user?.login}
+                    disabled={!user}
                     onClick={()=>likePost()}
                     >
                     <Likes />
                 </Button>
-                {(user?.login?.id === creator) && (              
+                {(user?.id === creator) && (              
                     <Button 
                         size="small" 
                         color="primary" 

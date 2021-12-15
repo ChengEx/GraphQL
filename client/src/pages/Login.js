@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import { AuthContext } from '../context/auth.js';
+import { useForm } from '../util/hooks.js';
 import { gql, useMutation } from '@apollo/client';
 import useStyles from './L&Rstyle.js';
 import { useDispatch } from 'react-redux';
@@ -10,46 +12,48 @@ import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';;
 
 
-const initialState = { email:'', password:''};
+// const initialState = { email:'', password:''};
 
-const Login = () => {
-    const [ formData, setFormData ] = useState(initialState);
+function Login(props){
+    //const [ formData, setFormData ] = useState(initialState);
+    const context = useContext(AuthContext);
+    const [errors, setErrors] = useState({});
     const classes = useStyles();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const history = useNavigate();
+    const { onChange, onSubmit, values } = useForm(loginUserCallback, {
+        email: '',
+        password: ''
+    });
 
-    const [ login, { loading, error, data } ] = useMutation(LOGIN_USER,{
-        update(_, result){
-            console.log("result",result);
-            dispatch(signin(result, history));
+    const [ login, { loading } ] = useMutation(LOGIN_USER,{
+        update(_, { data: { login: userData }} ){
+            console.log("result look structure",userData);
+            context.login(userData);
+            // props.history.push('/');
+            history('/');
+            //dispatch(signin(result, history));
+        },
+        onError(err) {
+            setErrors(err.graphQLErrors[0].extensions.exception.errors);
         },
         variables: {
-            email: formData.email,
-            password: formData.password
+            email: values.email,
+            password: values.password
         }
     });
-    if(data) {
-        console.log(data);
-    } 
-    if(error) {
-        console.log(error);
-        return "error"; // blocks rendering
+
+    function loginUserCallback() {
+        console.log("hihi");
+        login();
     }
 
-    const handleSubmit = (e)=>{
-        e.preventDefault();
-        try {
-            login();
-        }catch(err) {
-            console.log("Error", err);
-        }
-        
-    }
 
-    const handleChange = (e)=>{
-        setFormData({ ...formData, [e.target.name]:e.target.value });
+
+    // const handleChange = (e)=>{
+    //     setFormData({ ...formData, [e.target.name]:e.target.value });
         
-    }
+    // }
 
 
     return (
@@ -59,17 +63,19 @@ const Login = () => {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography variant="h5">Sign In</Typography>
-                <form className={classes.form} onSubmit={handleSubmit}>
+                <form onSubmit={onSubmit} className={classes.form} >
                     <Grid container spacing={2}>
                         <Input name="email"
                             label="Email"
-                            value={formData.email}
-                            handleChange={handleChange}
+                            type="text"
+                            value={values.email}
+                            onChange={onChange}
                             autoFocus/>                    
                         <Input name="password"
                             label="Password"
-                            value={formData.password}
-                            handleChange={handleChange}/>    
+                            type="text"
+                            value={values.password}
+                            onChange={onChange}/>    
                     </Grid>
                     <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                         Sign In

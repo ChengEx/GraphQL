@@ -10,8 +10,7 @@ const postQuery = {
             try {
                 console.log("BYE");
                 const posts = await PostMessage.find();
-
-                console.log("getPostDataInBackEnd", posts);
+                //console.log("getPostDataInBackEnd", posts);
                 return posts;
             } catch(err) {
                 console.log(err);
@@ -20,7 +19,7 @@ const postQuery = {
     },
     Mutation: {
         async createPost(_, { createMessage :{ title, message, selectedFile }}, context) {
-            //console.log("context", context);
+            console.log("context", context);
             console.log("inside",message);
             const user = await authCheck(context);
             //if(!user) return res.status(404).send('unvalid header token');
@@ -33,8 +32,11 @@ const postQuery = {
                 selectedFile: selectedFile,  
                 createdAt: new Date().toISOString()
             })
-            
+            console.log("newPost", newPost);
             const post = await newPost.save();
+            // context.pubsub.publish('NEW_POST', {
+            //     newPost: post
+            //   });
             return post;
         },
         async updatePost(_, { updateMessage : { id, title, message, selectedFile }}, context) {
@@ -79,7 +81,12 @@ const postQuery = {
                 throw new UserInputError('Post not found');
             }
             //return post;
-        }
+        },
+        // Subscription: {
+        //     newPost: {
+        //       subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_POST')
+        //     }
+        // }
     }
 
 };

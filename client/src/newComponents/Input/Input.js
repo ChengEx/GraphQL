@@ -1,97 +1,102 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
-import { gql, useMutation } from '@apollo/client';
+// import { gql, useMutation } from '@apollo/client';
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
 import FileBase from 'react-file-base64'
 import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
-import { createPosts, updatePost } from '../../actions/posts.js';
 import { getPosts } from '../../actions/posts.js'
 import { useNavigate } from 'react-router-dom';
+import { useForm } from '../../util/hooks.js';
+import { FETCH_POSTS_QUERY } from '../../util/graphql.js';
+import { AuthContext } from '../../context/auth.js';
+import { updatePost } from '../../api';
 
-const Input = ({ currentId, setCurrentId, setUpdateData }) => {
-
-    const [ postData, setPostData] = useState({
-        title:'', message:'', tags:'', selectedFile:''
+const Input = ({ currentId, setCurrentId, posts, refetch }) => {
+    const { values, OnlyForUpdateForm, onChange, selectedFile, onSubmit, clear } = useForm(createOrUpdataPostCallback, {
+        title:'', message:'', selectedFile:''
     });
-    const post = useSelector((state)=> currentId? state.posts.getPosts.find((p)=>p.id===currentId): null);
 
-    console.log("getPostQQ",post);
-    console.log("currentId",currentId);
-    const dispatch = useDispatch();
-    const user = JSON.parse(localStorage.getItem('profile'));
-    const classes = useStyles();
-
-
+    const { user } = useContext(AuthContext);
+    console.log("InputUser", user);
+    console.log("post", posts);
+    console.log("currentId", currentId);
+    const currentIdBind = posts?.find((p)=>p.id === currentId);
+    console.log("currentIdBind", currentIdBind);
 
     useEffect(()=>{
-        if(post) setPostData(post);
-    },[post])
-    
+        if(currentIdBind) OnlyForUpdateForm(currentIdBind);
+    },[currentIdBind])
 
-    const clear =() => {
+    const classes = useStyles();
+    const clearInput =() => {
         setCurrentId(0);
-        setPostData({
-            title:'', message:'', tags:'', selectedFile:''
-        });
+        clear();
     }
 
     //title, message, tags, selectedFile
-    const [ createPost, { loading, error, data } ] = useMutation(CREATE_POST,{
-        update(_, result){
-            console.log("createPost ",result);
-            
-            //dispatch(createPosts(result));
-        },
-        onError(err) {
-            alert(err);
-        },
+    const [createPost, { error }] = useMutation(CREATE_POST, {
         variables: {
-            title: postData.title,
-            message: postData.message,
-            //tags: postData.tags,
-            selectedFile: postData.selectedFile
+            title: values.title,
+            message: values.message,
+            selectedFile: values.selectedFile
+        },
+        update(proxy, result) {
+            console.log("result",result);
+            const data = proxy.readQuery({
+                query: FETCH_POSTS_QUERY
+            });
+            //data.getPosts.push(data.result);
+            data.getPosts = [result.data.createPost, ...data.getPosts];
+            proxy.writeQuery({
+                query: FETCH_POSTS_QUERY,
+                data: {
+                    getPosts: [result.data.createPost, ...data.getPosts],
+                },
+                variables: {
+                    title: values.title,
+                    message: values.message,
+                    selectedFile: values.selectedFile
+                }
+            });
+            //re-render Home page
+            refetch();
+            values.title = '';
+            values.message = '';
+            //values.tags = '';
+            values.selectedFile = '';
         }
-    });
+      });
 
     const [ updatePost, { updateloading, updateError, updateData } ] = useMutation(UPDATE_POST,{
+        variables: {
+            id: currentId,
+            title: values.title,
+            message: values.message,
+            //tags: postData.tags,
+            selectedFile: values.selectedFile
+        },
         update(_, result){
             console.log("updatePost ",result);
-         
-            //dispatch(updatePost(result));
         },
         onError(err) {
             alert(err);
-        },
-        variables: {
-            id: currentId,
-            title: postData.title,
-            message: postData.message,
-            //tags: postData.tags,
-            selectedFile: postData.selectedFile
         }
+        
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("postData",postData);
+
+    function createOrUpdataPostCallback() {
         if(currentId === 0) {
             createPost();
-
-            //try to re-render
-            dispatch(getPosts());
-            setUpdateData(postData);
-            clear();
-        }
-        else {
+        }else{
             updatePost();
-            clear();
         }
-        
         
     }
-    const userByLogin = user?.login?.name;
-    const userByRegister = user?.register?.name;
-    if(!userByLogin && !userByRegister){
+
+    if(!user?.name){
         return (
             <Paper className={classes.paper}>
                 <Typography variant="h6" align="center">
@@ -103,18 +108,16 @@ const Input = ({ currentId, setCurrentId, setUpdateData }) => {
     
 
     return (
-        
         <Paper className={classes.paper}>
-            <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-                <Typography variant="h6">{currentId ? 'Editing':'Creating'} a post</Typography>
-                
+            <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={onSubmit}>
+                <Typography variant="h6">{currentId? 'Editing':'Creating'} a post</Typography>
                 <TextField 
                     name="title" 
                     variant="outlined" 
                     label="Title" 
                     fullWidth
-                    value={postData.title}
-                    onChange={(e) => setPostData({ ...postData, title: e.target.value })}
+                    value={values.title}
+                    onChange={onChange}
                 />
                 <TextField 
                     name="message" 
@@ -123,23 +126,27 @@ const Input = ({ currentId, setCurrentId, setUpdateData }) => {
                     multiline
                     rows={10}
                     fullWidth
-                    value={postData.message}
-                    onChange={(e) => setPostData({ ...postData, message: e.target.value })}
+                    value={values.message}
+                    onChange={onChange}
                 />
                 <TextField 
                     name="tags" 
                     variant="outlined" 
                     label="Tags" 
                     fullWidth
-                    value={postData.tags}
-                    onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(',') })}
+                    value={values.tags}
+                    onChange={onChange}
                 />
-                <div className={classes.fileInput}>
+                {/* <div className={classes.fileInput}>
                     <FileBase 
                         type="file"
                         mutiple={false}
                         onDone={({base64}) => setPostData({...postData, selectedFile: base64})}
                     />
+                </div> */}
+
+                <div className={classes.fileInput}>
+                    <input type="file" name="selectedFile" onChange={selectedFile} />
                 </div>
                 <Button 
                     className={classes.buttonSubmit} 
@@ -154,11 +161,12 @@ const Input = ({ currentId, setCurrentId, setUpdateData }) => {
                     variant="contained" 
                     color="secondary" 
                     size="small" 
-                    onClick={clear}
+                    onClick={clearInput}
                     fullWidth>
                         Clear
                 </Button>
             </form>
+            
         </Paper>
     )
 }

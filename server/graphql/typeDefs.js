@@ -62,6 +62,9 @@ const typeDefs = gql`
         login(email:String, password:String): User!
         likePost(id: ID): PostMessage!
     }
+    # type Subscription {
+    #     newPost: PostMessage!
+    # }
 `;
 
 export default typeDefs;
